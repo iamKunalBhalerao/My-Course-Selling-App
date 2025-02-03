@@ -111,7 +111,35 @@ AdminRouter.post("/create-course", adminAuth, async (req, res) => {
   }
 });
 
-AdminRouter.put("/update-course", adminAuth, async (req, res) => {});
+AdminRouter.put("/update-course", adminAuth, async (req, res) => {
+  const userId = req.userId;
+  const { title, description, price, imageUrl, courseId } = req.body;
+
+  try {
+    const course = await CourseModel.updateOne(
+      {
+        _id: courseId,
+        creatorId: userId,
+      },
+      {
+        title: title,
+        description: description,
+        price: price,
+        imageUrl: imageUrl,
+      }
+    );
+
+    res.status(200).json({
+      message: "Course Updated Successfully 👏",
+      courseId: course._id,
+      courseData: course,
+    });
+  } catch (e) {
+    res.status(403).json({
+      message: "Credentials Incorrect 🤬",
+    });
+  }
+});
 
 AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {});
 
