@@ -2,6 +2,8 @@ const { Router } = require("express");
 const { AdminModel } = require("../db");
 const bcrypt = require("bcrypt");
 const z = require("zod");
+const jwt = require("jsonwebtoken");
+const { JWT_ADMIN_PASSWORD } = require("../config");
 
 const AdminRouter = Router();
 
@@ -36,28 +38,53 @@ AdminRouter.post("/signup", async (req, res) => {
     res.status(403).json({
       message: "Invalid Email or Password 🤬",
     });
+  }
 
-    try {
-      const hashedAdminPassword = bcrypt.hash(password, 5);
+  try {
+    const hashedAdminPassword = await bcrypt.hash(password, 5);
 
-      await AdminModel.create({
-        email: email,
-        password: hashedAdminPassword,
-        firstName: firstName,
-        lastName: lastName,
-      });
+    await AdminModel.create({
+      email: email,
+      password: hashedAdminPassword,
+      firstName: firstName,
+      lastName: lastName,
+    });
 
-      res.status(200).json({
-        message: "You are Signed Up as Admin 👏",
-      });
-    } catch (e) {
-      res.status(403).json({
-        message: "User Alredy Exists 🤬",
-      });
-    }
+    res.status(200).json({
+      message: "You are Signed Up as Admin 👏",
+    });
+  } catch (e) {
+    res.status(403).json({
+      message: "User Alredy Exists 🤬",
+    });
   }
 });
-AdminRouter.post("/signin", (req, res) => {});
+AdminRouter.post("/signin", async (req, res) => {
+  const { email, password } = req.body;
+
+  const admin = await AdminModel.findOne({
+    email: email,
+  });
+
+  if (!admin) {
+    res.status(403).json({
+      message: "User Not Found 🤬",
+    });
+  }
+
+  const compareAdminPassword = await bcrypt.compare(password, admin.password);
+
+  if (compareAdminPassword) {
+    const token = jwt.sign({ id: admin._id }, JWT_ADMIN_PASSWORD);
+    res.status(200).json({
+      token,
+    });
+  } else {
+    res.status(403).json({
+      message: "Invalid Credentials",
+    });
+  }
+});
 AdminRouter.post("/purchase", (req, res) => {});
 
 module.exports = {
