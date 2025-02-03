@@ -1,11 +1,11 @@
 const { Router } = require("express");
 const { CourseModel } = require("../db");
+const { userAuth } = require("../auth/UserAuth");
 
 const CourseRouter = Router();
 
-CourseRouter.post("/signup", (req, res) => {});
-CourseRouter.post("/signin", (req, res) => {});
-CourseRouter.post("/purchase", (req, res) => {});
+CourseRouter.post("/purchase", userAuth, (req, res) => {});
+CourseRouter.get("/preview", (req, res) => {});
 
 module.exports = {
   CourseRouter,

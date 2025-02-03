@@ -163,6 +163,25 @@ AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {
   }
 });
 
+AdminRouter.get("/course-bulk", adminAuth, async (req, res) => {
+  const adminId = req.userId;
+
+  try {
+    const courses = await CourseModel.find({
+      creatorId: adminId,
+    });
+
+    res.status(200).json({
+      message: "Your Courses: ",
+      courseData: courses,
+    });
+  } catch (e) {
+    res.status(403).json({
+      message: "Something Went Wrong 🤬",
+    });
+  }
+});
+
 module.exports = {
   AdminRouter,
 };
