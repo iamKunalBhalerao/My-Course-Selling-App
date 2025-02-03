@@ -1,9 +1,10 @@
 const { Router } = require("express");
-const { AdminModel } = require("../db");
+const { AdminModel, CourseModel } = require("../db");
 const bcrypt = require("bcrypt");
 const z = require("zod");
 const jwt = require("jsonwebtoken");
 const { JWT_ADMIN_PASSWORD } = require("../config");
+const { adminAuth } = require("../auth/AdminAuth");
 
 const AdminRouter = Router();
 
@@ -85,7 +86,34 @@ AdminRouter.post("/signin", async (req, res) => {
     });
   }
 });
-AdminRouter.post("/purchase", (req, res) => {});
+
+AdminRouter.post("/create-course", adminAuth, async (req, res) => {
+  const userId = req.userId;
+  const { title, description, price, imageUrl } = req.body;
+
+  try {
+    const course = await CourseModel.create({
+      title: title,
+      description: description,
+      price: price,
+      imageUrl: imageUrl,
+      creatorId: userId,
+    });
+
+    res.status(200).json({
+      message: "Course Created Successfully",
+      courseId: course._id,
+    });
+  } catch (e) {
+    res.status(200).json({
+      message: "Invalid Credentials",
+    });
+  }
+});
+
+AdminRouter.put("/update-course", adminAuth, async (req, res) => {});
+
+AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {});
 
 module.exports = {
   AdminRouter,
