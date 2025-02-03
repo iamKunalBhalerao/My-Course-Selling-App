@@ -141,7 +141,27 @@ AdminRouter.put("/update-course", adminAuth, async (req, res) => {
   }
 });
 
-AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {});
+AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {
+  const userId = req.userId;
+  const { courseId } = req.body;
+
+  try {
+    const course = await CourseModel.deleteOne({
+      _id: courseId,
+      creatorId: userId,
+    });
+
+    res.status(200).json({
+      message: "Course Deleted Successfully 👏",
+      courseId: course._id,
+      courseData: course,
+    });
+  } catch (e) {
+    res.status(403).json({
+      message: "Credentials Incorrect 🤬",
+    });
+  }
+});
 
 module.exports = {
   AdminRouter,
