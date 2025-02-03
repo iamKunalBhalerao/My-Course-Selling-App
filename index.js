@@ -14,7 +14,7 @@ app.use("/api/v1/admin", AdminRouter);
 app.use("/api/v1/course", CourseRouter);
 
 function main() {
-  mongoose.connect("");
+  mongoose.connect(process.env.MONGO_URL);
   app.listen(3000, () => {
     console.log("server is on PORT:3000");
   });

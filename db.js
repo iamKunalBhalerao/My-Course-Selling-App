@@ -24,7 +24,7 @@ const CourseSchema = new Schema({
   description: String,
   price: Number,
   imageUrl: String,
-  courseId: ObjectId,
+  creatorId: ObjectId,
 });
 
 const PurchaseSchema = new Schema({
@@ -33,9 +33,9 @@ const PurchaseSchema = new Schema({
 });
 
 const UserModel = model("users", UserSchema);
-const AdminModel = model("users", AdminSchema);
-const CourseModel = model("users", CourseSchema);
-const PurchaseModel = model("users", PurchaseSchema);
+const AdminModel = model("admins", AdminSchema);
+const CourseModel = model("courses", CourseSchema);
+const PurchaseModel = model("purchases", PurchaseSchema);
 
 module.exports = {
   UserModel,
