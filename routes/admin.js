@@ -88,7 +88,7 @@ AdminRouter.post("/signin", async (req, res) => {
 });
 
 AdminRouter.post("/create-course", adminAuth, async (req, res) => {
-  const userId = req.userId;
+  const adminId = req.adminId;
   const { title, description, price, imageUrl } = req.body;
 
   try {
@@ -97,7 +97,7 @@ AdminRouter.post("/create-course", adminAuth, async (req, res) => {
       description: description,
       price: price,
       imageUrl: imageUrl,
-      creatorId: userId,
+      creatorId: adminId,
     });
 
     res.status(200).json({
@@ -112,14 +112,14 @@ AdminRouter.post("/create-course", adminAuth, async (req, res) => {
 });
 
 AdminRouter.put("/update-course", adminAuth, async (req, res) => {
-  const userId = req.userId;
+  const adminId = req.adminId;
   const { title, description, price, imageUrl, courseId } = req.body;
 
   try {
     const course = await CourseModel.updateOne(
       {
         _id: courseId,
-        creatorId: userId,
+        creatorId: adminId,
       },
       {
         title: title,
@@ -142,13 +142,13 @@ AdminRouter.put("/update-course", adminAuth, async (req, res) => {
 });
 
 AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {
-  const userId = req.userId;
+  const adminId = req.adminId;
   const { courseId } = req.body;
 
   try {
     const course = await CourseModel.deleteOne({
       _id: courseId,
-      creatorId: userId,
+      creatorId: adminId,
     });
 
     res.status(200).json({
@@ -164,7 +164,7 @@ AdminRouter.delete("/delete-course", adminAuth, async (req, res) => {
 });
 
 AdminRouter.get("/course-bulk", adminAuth, async (req, res) => {
-  const adminId = req.userId;
+  const adminId = req.adminId;
 
   try {
     const courses = await CourseModel.find({
